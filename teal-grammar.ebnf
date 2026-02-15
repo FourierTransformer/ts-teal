@@ -15,19 +15,19 @@
        ‘for’ Name ‘=’ exp ‘,’ exp [‘,’ exp] ‘do’ block ‘end’ |
        ‘for’ namelist ‘in’ explist ‘do’ block ‘end’ |
        ‘function’ funcname funcbody |
-       ‘local’ attnamelist [‘:’ typelist] [‘=’ explist] |
++      ‘local’ attnamelist [‘:’ typelist] [‘=’ explist] |
        ‘local’ ‘function’ Name funcbody |
-       ‘local’ ‘record’ Name recordbody |
-       ‘local’ ‘interface’ Name recordbody |
-       ‘local’ ‘enum’ Name enumbody |
-       ‘local’ ‘type’ Name ‘=’ newtype |
-       ‘global’ attnamelist ‘:’ typelist [‘=’ explist] |
-       ‘global’ attnamelist ‘=’ explist |
-       ‘global’ ‘function’ Name funcbody |
-       ‘global’ ‘record’ Name recordbody |
-       ‘global’ ‘interface’ Name recordbody |
-       ‘global’ ‘enum’ Name enumbody |
-       ‘global’ ‘type’ Name [‘=’ newtype]
+*      ‘local’ ‘record’ Name recordbody |
+*      ‘local’ ‘interface’ Name recordbody |
+*      ‘local’ ‘enum’ Name enumbody |
+*      ‘local’ ‘type’ Name ‘=’ newtype |
+*      ‘global’ attnamelist ‘:’ typelist [‘=’ explist] |
+*      ‘global’ attnamelist ‘=’ explist |
+*      ‘global’ ‘function’ Name funcbody |
+*      ‘global’ ‘record’ Name recordbody |
+*      ‘global’ ‘interface’ Name recordbody |
+*      ‘global’ ‘enum’ Name enumbody |
+*      ‘global’ ‘type’ Name [‘=’ newtype]
 
    attnamelist ::=  Name [attrib] {‘,’ Name [attrib]}
 
@@ -37,7 +37,7 @@
 
    label ::= ‘::’ Name ‘::’
 
-   funcname ::= Name {‘.’ Name} ‘:’ Name | Name {‘.’ Name} ‘.’ Name
++  funcname ::= Name {‘.’ Name} ‘:’ Name | Name {‘.’ Name} ‘.’ Name
 
    varlist ::= var {‘,’ var}
 
@@ -49,7 +49,7 @@
 
    exp ::=  ‘nil’ | ‘false’ | ‘true’ | Numeral | LiteralString | ‘...’ | functiondef |
        prefixexp | tableconstructor | exp binop exp | unop exp |
-       exp ‘as’ type | exp ‘as’ ‘(’ typelist ‘)’ | Name ‘is’ type
+*      exp ‘as’ type | exp ‘as’ ‘(’ typelist ‘)’ | Name ‘is’ type
 
    prefixexp ::= var | functioncall | ‘(’ exp ‘)’
 
@@ -59,16 +59,16 @@
 
    functiondef ::= ‘function’ funcbody
 
-   funcbody ::= [typeargs] ‘(’ [parlist] ‘)’ [‘:’ retlist] block ‘end’
++  funcbody ::= [typeargs] ‘(’ [parlist] ‘)’ [‘:’ retlist] block ‘end’
 
-   parlist ::= parnamelist [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
++  parlist ::= parnamelist [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
 
    tableconstructor ::= ‘{’ [fieldlist] ‘}’
 
    fieldlist ::= field {fieldsep field} [fieldsep]
 
    field ::= ‘[’ exp ‘]’ ‘=’ exp |
-       Name [‘:’ type] ‘=’ exp |
++      Name [‘:’ type] ‘=’ exp |
        exp
 
    fieldsep ::= ‘,’ | ‘;’
@@ -80,50 +80,43 @@
 
    unop ::= ‘-’ | ‘not’ | ‘#’ | ‘~’
 
-   type ::= ‘(’ type ‘)’ | basetype {‘|’ basetype}
+*  type ::= ‘(’ type ‘)’ | basetype {‘|’ basetype}
 
-   nominal ::= Name {‘.’ Name } [typeargs]
+*  nominal ::= Name {‘.’ Name } [typeargs]
 
-   basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ |
-       ‘{’ type {',' type} ‘}’ | ‘{’ type ‘:’ type ‘}’ | functiontype
-       | nominal
+*  basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ |
+*      ‘{’ type {',' type} ‘}’ | ‘{’ type ‘:’ type ‘}’ | functiontype
+*      | nominal
 
-   typelist ::= type {‘,’ type}
+*  typelist ::= type {‘,’ type}
 
-   retlist ::= ‘(’ [typelist] [‘...’] ‘)’ | typelist [‘...’]
+*  retlist ::= ‘(’ [typelist] [‘...’] ‘)’ | typelist [‘...’]
 
-   typeargs ::= ‘<’ Name {‘,’ Name } ‘>’
+*  typeargs ::= ‘<’ Name {‘,’ Name } ‘>’
 
-   newtype ::= ‘record’ recordbody | ‘enum’ enumbody | type
-       | ‘require’ ‘(’ LiteralString ‘)’ {‘.’ Name }
+*  newtype ::= ‘record’ recordbody | ‘enum’ enumbody | type
+*      | ‘require’ ‘(’ LiteralString ‘)’ {‘.’ Name }
 
-   interfacelist ::= nominal {‘,’ nominal} |
-       ‘{’ type ‘}’ {‘,’ nominal}
+*  interfacelist ::= nominal {‘,’ nominal} |
+*      ‘{’ type ‘}’ {‘,’ nominal}
 
-   recordbody ::= [typeargs] [‘is’ interfacelist]
-       [‘where’ exp] {recordentry} ‘end’
+*  recordbody ::= [typeargs] [‘is’ interfacelist]
+*      [‘where’ exp] {recordentry} ‘end’
 
-   recordentry ::= ‘userdata’ |
-       ‘type’ Name ‘=’ newtype | [‘metamethod’] recordkey ‘:’ type |
-       ‘record’ Name recordbody | ‘enum’ Name enumbody
+*  recordentry ::= ‘userdata’ |
+*      ‘type’ Name ‘=’ newtype | [‘metamethod’] recordkey ‘:’ type |
+*      ‘record’ Name recordbody | ‘enum’ Name enumbody
 
-   recordkey ::= Name | ‘[’ LiteralString ‘]’
+*  recordkey ::= Name | ‘[’ LiteralString ‘]’
 
-   enumbody ::= {LiteralString} ‘end’
+*  enumbody ::= {LiteralString} ‘end’
 
-   functiontype ::= ‘function’ [typeargs] ‘(’ partypelist ‘)’ [‘:’ retlist]
+*  functiontype ::= ‘function’ [typeargs] ‘(’ partypelist ‘)’ [‘:’ retlist]
 
-   partypelist ::= partype {‘,’ partype}
+*  partypelist ::= partype {‘,’ partype}
 
-   partype ::= Name [‘?’] ‘:’ type | [‘?’] type
+*  partype ::= Name [‘?’] ‘:’ type | [‘?’] type
 
-   parnamelist ::= parname {‘,’ parname}
+*  parnamelist ::= parname {‘,’ parname}
 
-   parname ::= Name [‘?’] [‘:’ type]
-
-   test_jump ::= fieldsep fieldsep
-
-   test_optional ::= Name [‘?’]
-
-   test_repeat ::= {‘?’}
-
+*  parname ::= Name [‘?’] [‘:’ type]
