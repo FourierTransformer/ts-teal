@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "teal",
+      "camelcase": "Teal",
+      "title": "Teal",
+      "scope": "source.teal",
+      "file-types": [
+        "tl"
+      ],
+      "injection-regex": "^teal$",
+      "class-name": "TreeSitterTeal"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.1",
+    "license": "MIT",
+    "description": "A no-binding tree-sitter grammar for Teal source",
+    "authors": [
+      {
+        "name": "Fourier Transformer"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/FourierTransformer/ts-teal"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}
