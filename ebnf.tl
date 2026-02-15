@@ -123,7 +123,9 @@ function ebnf.parse(): {string: {{ebnf.symbol}}}, {string}
    local grammar: string
    do
       local ebnf_file = io.open("teal-grammar.ebnf", "r")
-      grammar = ebnf_file:read("*all")
+      -- This should probably be updated to properly handle the empty newlines instead of
+      -- just relying on them to exist...
+      grammar = ebnf_file:read("*all") .. "\n"
       ebnf_file:close()
    end
 
@@ -133,7 +135,7 @@ function ebnf.parse(): {string: {{ebnf.symbol}}}, {string}
 
    for rule in string.gmatch(grammar, "(.-)\n\n") do
       -- could update pattern to include +/*
-      local rule_name, full_expression = string.match(rule, "^%s*(.-)%s*::=(.-)$")
+      local rule_name, full_expression = string.match(rule, "^[+*]?%s*(.-)%s*::=(.-)$")
       local split = parse_expression(full_expression)
       expressions[rule_name] = split
       table.insert(rule_order, rule_name)

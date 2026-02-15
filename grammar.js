@@ -897,24 +897,8 @@ rules: {
    ),
   ),
 
-  test_jump: $ =>  seq(
-   $.fieldsep,
-   $.fieldsep,
-  ),
-
-  test_optional: $ =>  seq(
-   $.identifier,
-   optional(
-      '?',
-   ),
-  ),
-
-  test_repeat: $ =>   repeat(
-      '?',
-   ),
-
-	// below is from tree-sitter-teal
-	identifier: $ => /[a-zA-Z_][a-zA-Z_0-9]*/,
+   // below is from tree-sitter-teal
+   identifier: $ => /[a-zA-Z_][a-zA-Z_0-9]*/,
     number: $ => choice(
       /\d+(\.\d+)?(e\d+)?/i,
       /\.\d+(e\d+)?/i,
