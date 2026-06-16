@@ -14,8 +14,8 @@ This is primarily for use in the [teal-language-server](https://github.com/teal-
 After, it can be loaded for use with [ltreesitter](https://github.com/euclidianace/ltreesitter):
 
 ```teal
-local teal_parser = ltreesitter.require("ts-teal", "teal")
-teal_parser:parse_string("local x = 1")
+local teal = ltreesitter.require("ts-teal", "teal")
+teal:parser():parse_string("local x = 1")
 ```
 
 ## Development notes
