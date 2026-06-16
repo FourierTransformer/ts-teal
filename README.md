@@ -6,7 +6,7 @@ If you are looking for language bindings/highlighting, please take a look at [tr
 This is primarily for use in the [teal-language-server](https://github.com/teal-language/teal-language-server), which needs to interact with the specific versions of Teal and tree-sitter libraries and can be installed without the need of tree-sitter-cli.
 
 - Current Teal version: v0.24.8
-- Current tree-sitter version: v0.25.8 (the same as [ltreesitter](https://github.com/euclidianace/ltreesitter))
+- Current tree-sitter version: v0.26.8 (the same as [ltreesitter](https://github.com/euclidianace/ltreesitter))
 
 ## Usage
 
