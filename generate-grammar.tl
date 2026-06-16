@@ -165,6 +165,24 @@ local unop <const> = [[
   ),
 ]]
 
+local recordkey <const> = [[
+  _keyword_identifier: $ => alias(choice(
+    'type', 'record', 'interface', 'enum',
+    'global', 'macroexp', 'is', 'as',
+    'where', 'userdata', 'metamethod',
+  ), $.identifier),
+
+  recordkey: $ =>  choice(
+    $.identifier,
+    $._keyword_identifier, // to support Teal keywords as record keys
+  seq(
+    '[',
+    $.string,
+    ']',
+  ),
+  ),
+]]
+
 local function main()
    io.write([[
 // from the teal-grammar page. Currently not auto-generated, could be in the future.
@@ -199,6 +217,7 @@ conflicts: $ => [
   [$.exp],
   [$.exp, $.functioncall],
   [$.nominal],
+  [$.nominal, $.typeparam],
   [$.type],
   [$.parnamelist],
   [$.type, $.typelist],
@@ -252,6 +271,9 @@ rules: {
       
       elseif rule_name == "unop" then
          io.write(unop)
+
+      elseif rule_name == "recordkey" then
+        io.write(recordkey)
       
       elseif rule_name == "chunk" or rule_name == "block" then
          -- doing nothing here, chunk has been re-written above to satisfy tree-sitter's "no-empty string" policy
@@ -325,6 +347,7 @@ rules: {
         seq('x', /[0-9a-fA-F]{2}/),
         seq('d', /[0-7]{3}/),
         seq('u{', /[0-9a-fA-F]{1,8}/, '}'),
+        /[0-9]{1,3}/,
       ),
     ))),
 

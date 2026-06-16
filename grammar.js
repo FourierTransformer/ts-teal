@@ -30,6 +30,7 @@ conflicts: $ => [
   [$.exp],
   [$.exp, $.functioncall],
   [$.nominal],
+  [$.nominal, $.typeparam],
   [$.type],
   [$.parnamelist],
   [$.type, $.typelist],
@@ -183,6 +184,24 @@ rules: {
   ),
   seq(
     'local',
+    'macroexp',
+    $.identifier,
+    '(',
+    optional(
+       $.parlist,
+    ),
+    ')',
+    optional(
+      seq(
+       ':',
+       $.retlist,
+      ),
+    ),
+    repeat($.stat), optional($.retstat),
+    'end',
+  ),
+  seq(
+    'local',
     'record',
     $.identifier,
     $.recordbody,
@@ -203,6 +222,9 @@ rules: {
     'local',
     'type',
     $.identifier,
+    optional(
+       $.typeargs,
+    ),
     '=',
     $.newtype,
   ),
@@ -252,6 +274,9 @@ rules: {
     'global',
     'type',
     $.identifier,
+    optional(
+       $.typeargs,
+    ),
     optional(
       seq(
        '=',
@@ -655,6 +680,9 @@ rules: {
     'boolean',
     'nil',
     'number',
+    'integer',
+    'any',
+    'thread',
   seq(
     '{',
     $.type,
@@ -708,14 +736,27 @@ rules: {
 
   typeargs: $ =>  seq(
    '<',
-   $.identifier,
+   $.typeparam,
    repeat(
      seq(
       ',',
-      $.identifier,
+      $.typeparam,
      ),
    ),
    '>',
+  ),
+
+  typeparam: $ =>  choice(
+  seq(
+    $.identifier,
+    optional(
+      seq(
+       'is',
+       $.nominal,
+      ),
+    ),
+  ),
+    $.type,
   ),
 
   newtype: $ =>  choice(
@@ -802,6 +843,12 @@ rules: {
     $.recordkey,
     ':',
     $.type,
+    optional(
+      seq(
+       '=',
+       $.macroexpbody,
+      ),
+    ),
   ),
   seq(
     'record',
@@ -813,17 +860,28 @@ rules: {
     $.identifier,
     $.enumbody,
   ),
+  seq(
+    'interface',
+    $.identifier,
+    $.recordbody,
   ),
+  ),
+
+  _keyword_identifier: $ => alias(choice(
+    'type', 'record', 'interface', 'enum',
+    'global', 'macroexp', 'is', 'as',
+    'where', 'userdata', 'metamethod',
+  ), $.identifier),
 
   recordkey: $ =>  choice(
     $.identifier,
+    $._keyword_identifier, // to support Teal keywords as record keys
   seq(
     '[',
     $.string,
     ']',
   ),
   ),
-
   enumbody: $ =>  seq(
    repeat(
       $.string,
@@ -837,7 +895,9 @@ rules: {
       $.typeargs,
    ),
    '(',
-   $.partypelist,
+   optional(
+      $.partypelist,
+   ),
    ')',
    optional(
      seq(
@@ -847,14 +907,37 @@ rules: {
    ),
   ),
 
-  partypelist: $ =>  seq(
-   $.partype,
-   repeat(
-     seq(
-      ',',
-      $.partype,
-     ),
-   ),
+  partypelist: $ =>  choice(
+  seq(
+    $.partype,
+    repeat(
+      seq(
+       ',',
+       $.partype,
+      ),
+    ),
+    optional(
+      seq(
+       ',',
+       '...',
+       optional(
+         seq(
+          ':',
+          $.type,
+         ),
+       ),
+      ),
+    ),
+  ),
+  seq(
+    '...',
+    optional(
+      seq(
+       ':',
+       $.type,
+      ),
+    ),
+  ),
   ),
 
   partype: $ =>  choice(
@@ -895,6 +978,23 @@ rules: {
       $.type,
      ),
    ),
+  ),
+
+  macroexpbody: $ =>  seq(
+   'macroexp',
+   '(',
+   optional(
+      $.parlist,
+   ),
+   ')',
+   optional(
+     seq(
+      ':',
+      $.retlist,
+     ),
+   ),
+   repeat($.stat), optional($.retstat),
+   'end',
   ),
 
    // below is from tree-sitter-teal
@@ -957,6 +1057,7 @@ rules: {
         seq('x', /[0-9a-fA-F]{2}/),
         seq('d', /[0-7]{3}/),
         seq('u{', /[0-9a-fA-F]{1,8}/, '}'),
+        /[0-9]{1,3}/,
       ),
     ))),
 

@@ -330,7 +330,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "partypelist",
@@ -376,6 +376,33 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macroexpbody",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "parlist",
+          "named": true
+        },
+        {
+          "type": "retlist",
+          "named": true
+        },
+        {
+          "type": "retstat",
+          "named": true
+        },
+        {
+          "type": "stat",
           "named": true
         }
       ]
@@ -529,10 +556,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "partype",
+          "named": true
+        },
+        {
+          "type": "type",
           "named": true
         }
       ]
@@ -602,6 +633,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "macroexpbody",
           "named": true
         },
         {
@@ -725,7 +760,15 @@
           "named": true
         },
         {
+          "type": "parlist",
+          "named": true
+        },
+        {
           "type": "recordbody",
+          "named": true
+        },
+        {
+          "type": "retlist",
           "named": true
         },
         {
@@ -734,6 +777,10 @@
         },
         {
           "type": "stat",
+          "named": true
+        },
+        {
+          "type": "typeargs",
           "named": true
         },
         {
@@ -853,7 +900,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "typeparam",
           "named": true
         }
       ]
@@ -867,6 +914,29 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "typeparam",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "nominal",
+          "named": true
+        },
         {
           "type": "type",
           "named": true
@@ -1038,6 +1108,10 @@
     "named": false
   },
   {
+    "type": "any",
+    "named": false
+  },
+  {
     "type": "as",
     "named": false
   },
@@ -1115,6 +1189,10 @@
     "named": false
   },
   {
+    "type": "integer",
+    "named": false
+  },
+  {
     "type": "interface",
     "named": false
   },
@@ -1132,6 +1210,10 @@
   },
   {
     "type": "long_string_start",
+    "named": false
+  },
+  {
+    "type": "macroexp",
     "named": false
   },
   {
@@ -1188,6 +1270,10 @@
   },
   {
     "type": "then",
+    "named": false
+  },
+  {
+    "type": "thread",
     "named": false
   },
   {

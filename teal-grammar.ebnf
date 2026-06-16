@@ -17,17 +17,18 @@
        ‘function’ funcname funcbody |
 +      ‘local’ attnamelist [‘:’ typelist] [‘=’ explist] |
        ‘local’ ‘function’ Name funcbody |
+*      ‘local’ ‘macroexp’ Name ‘(’ [parlist] ‘)’ [‘:’ retlist] block ‘end’ |
 *      ‘local’ ‘record’ Name recordbody |
 *      ‘local’ ‘interface’ Name recordbody |
 *      ‘local’ ‘enum’ Name enumbody |
-*      ‘local’ ‘type’ Name ‘=’ newtype |
+*      ‘local’ ‘type’ Name [typeargs] ‘=’ newtype |
 *      ‘global’ attnamelist ‘:’ typelist [‘=’ explist] |
 *      ‘global’ attnamelist ‘=’ explist |
 *      ‘global’ ‘function’ Name funcbody |
 *      ‘global’ ‘record’ Name recordbody |
 *      ‘global’ ‘interface’ Name recordbody |
 *      ‘global’ ‘enum’ Name enumbody |
-*      ‘global’ ‘type’ Name [‘=’ newtype]
+*      ‘global’ ‘type’ Name [typeargs] [‘=’ newtype]
 
    attnamelist ::=  Name [attrib] {‘,’ Name [attrib]}
 
@@ -84,7 +85,7 @@
 
 *  nominal ::= Name {‘.’ Name } [typeargs]
 
-*  basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ |
+*  basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ | ‘integer’ | ‘any’ | ‘thread’ |
 *      ‘{’ type {',' type} ‘}’ | ‘{’ type ‘:’ type ‘}’ | functiontype
 *      | nominal
 
@@ -92,7 +93,9 @@
 
 *  retlist ::= ‘(’ [typelist] [‘...’] ‘)’ | typelist [‘...’]
 
-*  typeargs ::= ‘<’ Name {‘,’ Name } ‘>’
+*  typeargs ::= ‘<’ typeparam {‘,’ typeparam } ‘>’
+
+*  typeparam ::= Name [‘is’ nominal] | type
 
 *  newtype ::= ‘record’ recordbody | ‘enum’ enumbody | type
 *      | ‘require’ ‘(’ LiteralString ‘)’ {‘.’ Name }
@@ -104,19 +107,21 @@
 *      [‘where’ exp] {recordentry} ‘end’
 
 *  recordentry ::= ‘userdata’ |
-*      ‘type’ Name ‘=’ newtype | [‘metamethod’] recordkey ‘:’ type |
-*      ‘record’ Name recordbody | ‘enum’ Name enumbody
+*      ‘type’ Name ‘=’ newtype | [‘metamethod’] recordkey ‘:’ type [‘=’ macroexpbody] |
+*      ‘record’ Name recordbody | ‘enum’ Name enumbody | 'interface' Name recordbody
 
 *  recordkey ::= Name | ‘[’ LiteralString ‘]’
 
 *  enumbody ::= {LiteralString} ‘end’
 
-*  functiontype ::= ‘function’ [typeargs] ‘(’ partypelist ‘)’ [‘:’ retlist]
+*  functiontype ::= ‘function’ [typeargs] ‘(’ [partypelist] ‘)’ [‘:’ retlist]
 
-*  partypelist ::= partype {‘,’ partype}
+*  partypelist ::= partype {‘,’ partype} [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
 
 *  partype ::= Name [‘?’] ‘:’ type | [‘?’] type
 
 *  parnamelist ::= parname {‘,’ parname}
 
 *  parname ::= Name [‘?’] [‘:’ type]
+
+*  macroexpbody ::= ‘macroexp’ ‘(’ [parlist] ‘)’ [‘:’ retlist] block ‘end’
