@@ -23,7 +23,7 @@ teal:parser():parse_string("local x = 1")
 - Install the version of tree-sitter as noted above. We use ltreesitter for reading the tree-sitter grammar and it's good to keep them in sync.
 - The codebase is a little messy, but _should_ be able to handle simple changes/additions to Teal's grammar.
     - It is mostly a direct translation. However `chunk` had to be rewritten as the entrypoint, and `block` was inlined. Both were because tree-sitter doesn't allow rules to match the empty string.
-    - The only other change is that precedence is added to `binop` and `unop`.
+    - The only other change is that precedence is added to `binop`, `unop`, and `recordkey` has been modified to support Teal keywords.
 
 ### New ltreesitter
 
