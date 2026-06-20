@@ -64,7 +64,8 @@ jobs:
       fail-fast: false
       matrix:
         lua: [lua=5.1, lua=5.4, luajit=@v2.1]
-        target: [mingw, vs]
+        # target: [mingw, vs] # will re-add mingw when ltreesitter bug is fixed.
+        target: [vs]
     runs-on: windows-2022
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE.
