@@ -18,6 +18,6 @@ description = {
 build = {
    type = "builtin",
    modules = {
-      ["ts-teal"] = {"src/parser.c", "src/scanner.c", "src/lua_stub.c", incdirs = {"src"}}
+      ["ts-teal"] = {"src/parser.c", "src/scanner.c", incdirs = {"src"}}
    }   
 }
