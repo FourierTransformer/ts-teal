@@ -30,6 +30,7 @@ conflicts: $ => [
   [$.exp],
   [$.exp, $.functioncall],
   [$.nominal],
+  [$.nominal, $.typeparam],
   [$.type],
   [$.parnamelist],
   [$.type, $.typelist],
@@ -78,9 +79,9 @@ rules: {
   stat: $ =>  choice(
     ';',
   seq(
-    $.varlist,
+    field('variables', $.varlist),
     '=',
-    $.explist,
+    field('expressions', $.explist),
   ),
     $.functioncall,
     $.label,
@@ -96,7 +97,7 @@ rules: {
   ),
   seq(
     'while',
-    $.exp,
+    field('condition', $.exp),
     'do',
     repeat($.stat), optional($.retstat),
     'end',
@@ -105,17 +106,17 @@ rules: {
     'repeat',
     repeat($.stat), optional($.retstat),
     'until',
-    $.exp,
+    field('condition', $.exp),
   ),
   seq(
     'if',
-    $.exp,
+    field('condition', $.exp),
     'then',
     repeat($.stat), optional($.retstat),
     repeat(
       seq(
        'elseif',
-       $.exp,
+       field('condition', $.exp),
        'then',
        repeat($.stat), optional($.retstat),
       ),
@@ -130,15 +131,15 @@ rules: {
   ),
   seq(
     'for',
-    $.identifier,
+    field('variable', $.identifier),
     '=',
-    $.exp,
+    field('initializer', $.exp),
     ',',
-    $.exp,
+    field('target', $.exp),
     optional(
       seq(
        ',',
-       $.exp,
+       field('step', $.exp),
       ),
     ),
     'do',
@@ -147,115 +148,139 @@ rules: {
   ),
   seq(
     'for',
-    $.namelist,
+    field('variable', $.namelist),
     'in',
-    $.explist,
+    field('iterator', $.explist),
     'do',
     repeat($.stat), optional($.retstat),
     'end',
   ),
   seq(
     'function',
-    $.funcname,
+    field('name', $.funcname),
     $.funcbody,
   ),
   seq(
     'local',
-    $.attnamelist,
+    field('declarators', $.attnamelist),
     optional(
       seq(
        ':',
-       $.typelist,
+       field('type_annotation', $.typelist),
       ),
     ),
     optional(
       seq(
        '=',
-       $.explist,
+       field('initializers', $.explist),
       ),
     ),
   ),
   seq(
     'local',
     'function',
-    $.identifier,
+    field('name', $.identifier),
     $.funcbody,
   ),
   seq(
     'local',
+    'macroexp',
+    field('name', $.identifier),
+    '(',
+    optional(
+       field('arguments', $.parlist),
+    ),
+    ')',
+    optional(
+      seq(
+       ':',
+       field('return_type', $.retlist),
+      ),
+    ),
+    repeat($.stat), optional($.retstat),
+    'end',
+  ),
+  seq(
+    'local',
     'record',
-    $.identifier,
-    $.recordbody,
+    field('name', $.identifier),
+    field('record_body', $.recordbody),
   ),
   seq(
     'local',
     'interface',
-    $.identifier,
-    $.recordbody,
+    field('name', $.identifier),
+    field('interface_body', $.recordbody),
   ),
   seq(
     'local',
     'enum',
-    $.identifier,
-    $.enumbody,
+    field('name', $.identifier),
+    field('enum_body', $.enumbody),
   ),
   seq(
     'local',
     'type',
-    $.identifier,
+    field('name', $.identifier),
+    optional(
+       $.typeargs,
+    ),
     '=',
-    $.newtype,
+    field('value', $.newtype),
   ),
   seq(
     'global',
-    $.attnamelist,
+    field('declarators', $.attnamelist),
     ':',
-    $.typelist,
+    field('type_annotation', $.typelist),
     optional(
       seq(
        '=',
-       $.explist,
+       field('initializers', $.explist),
       ),
     ),
   ),
   seq(
     'global',
-    $.attnamelist,
+    field('declarators', $.attnamelist),
     '=',
-    $.explist,
+    field('initializers', $.explist),
   ),
   seq(
     'global',
     'function',
-    $.identifier,
+    field('name', $.identifier),
     $.funcbody,
   ),
   seq(
     'global',
     'record',
-    $.identifier,
-    $.recordbody,
+    field('name', $.identifier),
+    field('record_body', $.recordbody),
   ),
   seq(
     'global',
     'interface',
-    $.identifier,
-    $.recordbody,
+    field('name', $.identifier),
+    field('interface_body', $.recordbody),
   ),
   seq(
     'global',
     'enum',
-    $.identifier,
-    $.enumbody,
+    field('name', $.identifier),
+    field('enum_body', $.enumbody),
   ),
   seq(
     'global',
     'type',
-    $.identifier,
+    field('name', $.identifier),
+    optional(
+       $.typeargs,
+    ),
     optional(
       seq(
        '=',
-       $.newtype,
+       field('value', $.newtype),
       ),
     ),
   ),
@@ -264,14 +289,14 @@ rules: {
   attnamelist: $ =>  seq(
    $.identifier,
    optional(
-      $.attrib,
+      field('attribute', $.attrib),
    ),
    repeat(
      seq(
       ',',
       $.identifier,
       optional(
-         $.attrib,
+         field('attribute', $.attrib),
       ),
      ),
    ),
@@ -301,7 +326,7 @@ rules: {
 
   funcname: $ =>  choice(
   seq(
-    $.identifier,
+    field('base', $.identifier),
     repeat(
       seq(
        '.',
@@ -309,10 +334,10 @@ rules: {
       ),
     ),
     ':',
-    $.identifier,
+    field('method', $.identifier),
   ),
   seq(
-    $.identifier,
+    field('base', $.identifier),
     repeat(
       seq(
        '.',
@@ -320,7 +345,7 @@ rules: {
       ),
     ),
     '.',
-    $.identifier,
+    field('entry', $.identifier),
   ),
   ),
 
@@ -337,15 +362,15 @@ rules: {
   var: $ =>  choice(
     $.identifier,
   seq(
-    $.prefixexp,
+    field('object', $.prefixexp),
     '[',
-    $.exp,
+    field('expr_key', $.exp),
     ']',
   ),
   seq(
-    $.prefixexp,
+    field('object', $.prefixexp),
     '.',
-    $.identifier,
+    field('key', $.identifier),
   ),
   ),
 
@@ -380,13 +405,13 @@ rules: {
     $.prefixexp,
     $.tableconstructor,
   seq(
-    $.exp,
-    $.binop,
-    $.exp,
+    field('left', $.exp),
+    field('op', $.binop),
+    field('right', $.exp),
   ),
   seq(
-    $.unop,
-    $.exp,
+    field('op', $.unop),
+    field('right', $.exp),
   ),
   seq(
     $.exp,
@@ -419,14 +444,14 @@ rules: {
 
   functioncall: $ =>  choice(
   seq(
-    $.prefixexp,
-    $.args,
+    field('called_object', $.prefixexp),
+    field('arguments', $.args),
   ),
   seq(
-    $.prefixexp,
+    field('called_object', $.prefixexp),
     ':',
-    $.identifier,
-    $.args,
+    field('method', $.identifier),
+    field('arguments', $.args),
   ),
   ),
 
@@ -449,17 +474,17 @@ rules: {
 
   funcbody: $ =>  seq(
    optional(
-      $.typeargs,
+      field('typeargs', $.typeargs),
    ),
    '(',
    optional(
-      $.parlist,
+      field('arguments', $.parlist),
    ),
    ')',
    optional(
      seq(
       ':',
-      $.retlist,
+      field('return_type', $.retlist),
      ),
    ),
    repeat($.stat), optional($.retstat),
@@ -517,21 +542,21 @@ rules: {
   field: $ =>  choice(
   seq(
     '[',
-    $.exp,
+    field('expr_key', $.exp),
     ']',
     '=',
-    $.exp,
+    field('value', $.exp),
   ),
   seq(
-    $.identifier,
+    field('key', $.identifier),
     optional(
       seq(
        ':',
-       $.type,
+       field('type', $.type),
       ),
     ),
     '=',
-    $.exp,
+    field('value', $.exp),
   ),
     $.exp,
   ),
@@ -638,7 +663,7 @@ rules: {
   ),
 
   nominal: $ =>  seq(
-   $.identifier,
+   field('name', $.identifier),
    repeat(
      seq(
       '.',
@@ -655,22 +680,25 @@ rules: {
     'boolean',
     'nil',
     'number',
+    'integer',
+    'any',
+    'thread',
   seq(
     '{',
-    $.type,
+    field('tuple_type', $.type),
     repeat(
       seq(
        ',',
-       $.type,
+       field('tuple_type', $.type),
       ),
     ),
     '}',
   ),
   seq(
     '{',
-    $.type,
+    field('key_type', $.type),
     ':',
-    $.type,
+    field('value_type', $.type),
     '}',
   ),
     $.functiontype,
@@ -708,14 +736,27 @@ rules: {
 
   typeargs: $ =>  seq(
    '<',
-   $.identifier,
+   $.typeparam,
    repeat(
      seq(
       ',',
-      $.identifier,
+      $.typeparam,
      ),
    ),
    '>',
+  ),
+
+  typeparam: $ =>  choice(
+  seq(
+    field('name', $.identifier),
+    optional(
+      seq(
+       'is',
+       field('constraint', $.nominal),
+      ),
+    ),
+  ),
+    $.type,
   ),
 
   newtype: $ =>  choice(
@@ -772,13 +813,13 @@ rules: {
    optional(
      seq(
       'is',
-      $.interfacelist,
+      field('is_types', $.interfacelist),
      ),
    ),
    optional(
      seq(
       'where',
-      $.exp,
+      field('where', $.exp),
      ),
    ),
    repeat(
@@ -791,39 +832,56 @@ rules: {
     'userdata',
   seq(
     'type',
-    $.identifier,
+    field('name', $.identifier),
     '=',
-    $.newtype,
+    field('value', $.newtype),
   ),
   seq(
     optional(
        'metamethod',
     ),
-    $.recordkey,
+    field('name', $.recordkey),
     ':',
-    $.type,
+    field('type', $.type),
+    optional(
+      seq(
+       '=',
+       $.macroexpbody,
+      ),
+    ),
   ),
   seq(
     'record',
-    $.identifier,
-    $.recordbody,
+    field('name', $.identifier),
+    field('record_body', $.recordbody),
   ),
   seq(
     'enum',
-    $.identifier,
-    $.enumbody,
+    field('name', $.identifier),
+    field('enum_body', $.enumbody),
+  ),
+  seq(
+    'interface',
+    field('name', $.identifier),
+    field('interface_body', $.recordbody),
   ),
   ),
 
+  _keyword_identifier: $ => alias(choice(
+    'type', 'record', 'interface', 'enum',
+    'global', 'macroexp', 'is', 'as',
+    'where', 'userdata', 'metamethod',
+  ), $.identifier),
+
   recordkey: $ =>  choice(
     $.identifier,
+    $._keyword_identifier, // to support Teal keywords as record keys
   seq(
     '[',
     $.string,
     ']',
   ),
   ),
-
   enumbody: $ =>  seq(
    repeat(
       $.string,
@@ -834,43 +892,68 @@ rules: {
   functiontype: $ =>  seq(
    'function',
    optional(
-      $.typeargs,
+      field('typeargs', $.typeargs),
    ),
    '(',
-   $.partypelist,
+   optional(
+      field('arguments', $.partypelist),
+   ),
    ')',
    optional(
      seq(
       ':',
-      $.retlist,
+      field('return_type', $.retlist),
      ),
    ),
   ),
 
-  partypelist: $ =>  seq(
-   $.partype,
-   repeat(
-     seq(
-      ',',
-      $.partype,
-     ),
-   ),
+  partypelist: $ =>  choice(
+  seq(
+    $.partype,
+    repeat(
+      seq(
+       ',',
+       $.partype,
+      ),
+    ),
+    optional(
+      seq(
+       ',',
+       '...',
+       optional(
+         seq(
+          ':',
+          $.type,
+         ),
+       ),
+      ),
+    ),
+  ),
+  seq(
+    '...',
+    optional(
+      seq(
+       ':',
+       $.type,
+      ),
+    ),
+  ),
   ),
 
   partype: $ =>  choice(
   seq(
-    $.identifier,
+    field('name', $.identifier),
     optional(
        '?',
     ),
     ':',
-    $.type,
+    field('type', $.type),
   ),
   seq(
     optional(
        '?',
     ),
-    $.type,
+    field('type', $.type),
   ),
   ),
 
@@ -885,16 +968,33 @@ rules: {
   ),
 
   parname: $ =>  seq(
-   $.identifier,
+   field('name', $.identifier),
    optional(
       '?',
    ),
    optional(
      seq(
       ':',
-      $.type,
+      field('type', $.type),
      ),
    ),
+  ),
+
+  macroexpbody: $ =>  seq(
+   'macroexp',
+   '(',
+   optional(
+      field('arguments', $.parlist),
+   ),
+   ')',
+   optional(
+     seq(
+      ':',
+      field('return_type', $.retlist),
+     ),
+   ),
+   repeat($.stat), optional($.retstat),
+   'end',
   ),
 
    // below is from tree-sitter-teal
@@ -957,6 +1057,7 @@ rules: {
         seq('x', /[0-9a-fA-F]{2}/),
         seq('d', /[0-7]{3}/),
         seq('u{', /[0-9a-fA-F]{1,8}/, '}'),
+        /[0-9]{1,3}/,
       ),
     ))),
 

@@ -28,6 +28,7 @@ local record ebnf
 
    interface symbol
       kind: symbol_kind
+      field: string
    end
 
    interface literal_symbol is symbol where self.kind == "literal"
@@ -49,6 +50,17 @@ local record ebnf
    interface lookup_symbol is symbol where self.kind == "lookup"
       value: string
    end
+end
+
+-- Adding field names with `@` in teal-grammar.ebnf, this parses out as a field name
+local function read_annotation(full_expression: string, i: integer): string, integer
+   if string.sub(full_expression, i + 1, i + 1) == "@" then
+      local _: integer
+      local field_name: string
+      _, i, field_name = string.find(full_expression, "@([%a_]+)", i + 1)
+      return field_name, i
+   end
+   return nil, i
 end
 
 local function parse_expression(full_expression: string, i?: integer): {{ebnf.symbol}}, integer
@@ -102,12 +114,14 @@ local function parse_expression(full_expression: string, i?: integer): {{ebnf.sy
          if current_byte >= 65 and current_byte <= 90 then
             _, i, str_value = string.find(full_expression, "([A-Za-z]+)", i)
             local s: ebnf.lua_symbol = {kind="lua_base", value=(str_value as ebnf.lua_symbol_kind)}
+            s.field, i = read_annotation(full_expression, i)
             table.insert(rules[current_rule], s)
 
          -- lowercase, refers to a lookup
          elseif current_byte >= 97 and current_byte <= 122 then
             _, i, str_value = string.find(full_expression, "([a-z]+)", i)
             local s: ebnf.lookup_symbol = {kind="lookup", value=str_value}
+            s.field, i = read_annotation(full_expression, i)
             table.insert(rules[current_rule], s)
 
          end
@@ -158,6 +172,14 @@ function ebnf.parse(): {string: {{ebnf.symbol}}}, {string}
 
    return expressions, rule_order
 
+end
+
+-- strip annotations from file, used when comparing with original-teal.ebnf
+function ebnf.unannotated(): string
+   local ebnf_file = io.open("teal-grammar.ebnf", "r")
+   local text = ebnf_file:read("*all")
+   ebnf_file:close()
+   return (text:gsub("@[%a_]+", ""))
 end
 
 return ebnf

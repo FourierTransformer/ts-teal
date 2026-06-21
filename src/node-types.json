@@ -25,15 +25,22 @@
   {
     "type": "attnamelist",
     "named": true,
-    "fields": {},
+    "fields": {
+      "attribute": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attrib",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "attrib",
-          "named": true
-        },
         {
           "type": "identifier",
           "named": true
@@ -59,9 +66,40 @@
   {
     "type": "basetype",
     "named": true,
-    "fields": {},
+    "fields": {
+      "key_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "tuple_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "value_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
@@ -70,10 +108,6 @@
         },
         {
           "type": "nominal",
-          "named": true
-        },
-        {
-          "type": "type",
           "named": true
         }
       ]
@@ -126,15 +160,46 @@
   {
     "type": "exp",
     "named": true,
-    "fields": {},
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "op": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "binop",
+            "named": true
+          },
+          {
+            "type": "unop",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "binop",
-          "named": true
-        },
         {
           "type": "exp",
           "named": true
@@ -170,10 +235,6 @@
         {
           "type": "typelist",
           "named": true
-        },
-        {
-          "type": "unop",
-          "named": true
         }
       ]
     }
@@ -196,21 +257,54 @@
   {
     "type": "field",
     "named": true,
-    "fields": {},
+    "fields": {
+      "expr_key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
           "type": "exp",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "type",
           "named": true
         }
       ]
@@ -243,29 +337,48 @@
   {
     "type": "funcbody",
     "named": true,
-    "fields": {},
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parlist",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "retlist",
+            "named": true
+          }
+        ]
+      },
+      "typeargs": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "typeargs",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "parlist",
-          "named": true
-        },
-        {
-          "type": "retlist",
-          "named": true
-        },
         {
           "type": "retstat",
           "named": true
         },
         {
           "type": "stat",
-          "named": true
-        },
-        {
-          "type": "typeargs",
           "named": true
         }
       ]
@@ -274,10 +387,41 @@
   {
     "type": "funcname",
     "named": true,
-    "fields": {},
+    "fields": {
+      "base": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "entry": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "method": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "identifier",
@@ -289,24 +433,37 @@
   {
     "type": "functioncall",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "args",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "prefixexp",
-          "named": true
-        }
-      ]
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "args",
+            "named": true
+          }
+        ]
+      },
+      "called_object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "prefixexp",
+            "named": true
+          }
+        ]
+      },
+      "method": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -327,24 +484,37 @@
   {
     "type": "functiontype",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "partypelist",
-          "named": true
-        },
-        {
-          "type": "retlist",
-          "named": true
-        },
-        {
-          "type": "typeargs",
-          "named": true
-        }
-      ]
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "partypelist",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "retlist",
+            "named": true
+          }
+        ]
+      },
+      "typeargs": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "typeargs",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -376,6 +546,46 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macroexpbody",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parlist",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "retlist",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "retstat",
+          "named": true
+        },
+        {
+          "type": "stat",
           "named": true
         }
       ]
@@ -430,10 +640,21 @@
   {
     "type": "nominal",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "identifier",
@@ -473,20 +694,27 @@
   {
     "type": "parname",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -507,20 +735,27 @@
   {
     "type": "partype",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -529,10 +764,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "partype",
+          "named": true
+        },
+        {
+          "type": "type",
           "named": true
         }
       ]
@@ -564,19 +803,32 @@
   {
     "type": "recordbody",
     "named": true,
-    "fields": {},
+    "fields": {
+      "is_types": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "interfacelist",
+            "named": true
+          }
+        ]
+      },
+      "where": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "exp",
-          "named": true
-        },
-        {
-          "type": "interfacelist",
-          "named": true
-        },
         {
           "type": "recordentry",
           "named": true
@@ -591,33 +843,78 @@
   {
     "type": "recordentry",
     "named": true,
-    "fields": {},
+    "fields": {
+      "enum_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "enumbody",
+            "named": true
+          }
+        ]
+      },
+      "interface_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "recordbody",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "recordkey",
+            "named": true
+          }
+        ]
+      },
+      "record_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "recordbody",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "newtype",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "enumbody",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "newtype",
-          "named": true
-        },
-        {
-          "type": "recordbody",
-          "named": true
-        },
-        {
-          "type": "recordkey",
-          "named": true
-        },
-        {
-          "type": "type",
+          "type": "macroexpbody",
           "named": true
         }
       ]
@@ -675,33 +972,202 @@
   {
     "type": "stat",
     "named": true,
-    "fields": {},
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parlist",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "declarators": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attnamelist",
+            "named": true
+          }
+        ]
+      },
+      "enum_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "enumbody",
+            "named": true
+          }
+        ]
+      },
+      "expressions": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "explist",
+            "named": true
+          }
+        ]
+      },
+      "initializer": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "initializers": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "explist",
+            "named": true
+          }
+        ]
+      },
+      "interface_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "recordbody",
+            "named": true
+          }
+        ]
+      },
+      "iterator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "explist",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "funcname",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "record_body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "recordbody",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "retlist",
+            "named": true
+          }
+        ]
+      },
+      "step": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "type_annotation": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "typelist",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "newtype",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "namelist",
+            "named": true
+          }
+        ]
+      },
+      "variables": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "varlist",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
       "types": [
         {
-          "type": "attnamelist",
-          "named": true
-        },
-        {
-          "type": "enumbody",
-          "named": true
-        },
-        {
-          "type": "exp",
-          "named": true
-        },
-        {
-          "type": "explist",
-          "named": true
-        },
-        {
           "type": "funcbody",
-          "named": true
-        },
-        {
-          "type": "funcname",
           "named": true
         },
         {
@@ -717,18 +1183,6 @@
           "named": true
         },
         {
-          "type": "namelist",
-          "named": true
-        },
-        {
-          "type": "newtype",
-          "named": true
-        },
-        {
-          "type": "recordbody",
-          "named": true
-        },
-        {
           "type": "retstat",
           "named": true
         },
@@ -737,11 +1191,7 @@
           "named": true
         },
         {
-          "type": "typelist",
-          "named": true
-        },
-        {
-          "type": "varlist",
+          "type": "typeargs",
           "named": true
         }
       ]
@@ -853,7 +1303,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "typeparam",
           "named": true
         }
       ]
@@ -875,6 +1325,42 @@
     }
   },
   {
+    "type": "typeparam",
+    "named": true,
+    "fields": {
+      "constraint": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "nominal",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "unop",
     "named": true,
     "fields": {}
@@ -882,21 +1368,44 @@
   {
     "type": "var",
     "named": true,
-    "fields": {},
+    "fields": {
+      "expr_key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "exp",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "object": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "prefixexp",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "exp",
-          "named": true
-        },
-        {
           "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "prefixexp",
           "named": true
         }
       ]
@@ -1038,6 +1547,10 @@
     "named": false
   },
   {
+    "type": "any",
+    "named": false
+  },
+  {
     "type": "as",
     "named": false
   },
@@ -1115,6 +1628,10 @@
     "named": false
   },
   {
+    "type": "integer",
+    "named": false
+  },
+  {
     "type": "interface",
     "named": false
   },
@@ -1132,6 +1649,10 @@
   },
   {
     "type": "long_string_start",
+    "named": false
+  },
+  {
+    "type": "macroexp",
     "named": false
   },
   {
@@ -1188,6 +1709,10 @@
   },
   {
     "type": "then",
+    "named": false
+  },
+  {
+    "type": "thread",
     "named": false
   },
   {

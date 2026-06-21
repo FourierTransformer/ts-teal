@@ -3,33 +3,34 @@
    block ::= {stat} [retstat]
 
    stat ::=  ‘;’ |
-       varlist ‘=’ explist |
+       varlist@variables ‘=’ explist@expressions |
        functioncall |
        label |
        ‘break’ |
        ‘goto’ Name |
        ‘do’ block ‘end’ |
-       ‘while’ exp ‘do’ block ‘end’ |
-       ‘repeat’ block ‘until’ exp |
-       ‘if’ exp ‘then’ block {‘elseif’ exp ‘then’ block} [‘else’ block] ‘end’ |
-       ‘for’ Name ‘=’ exp ‘,’ exp [‘,’ exp] ‘do’ block ‘end’ |
-       ‘for’ namelist ‘in’ explist ‘do’ block ‘end’ |
-       ‘function’ funcname funcbody |
-+      ‘local’ attnamelist [‘:’ typelist] [‘=’ explist] |
-       ‘local’ ‘function’ Name funcbody |
-*      ‘local’ ‘record’ Name recordbody |
-*      ‘local’ ‘interface’ Name recordbody |
-*      ‘local’ ‘enum’ Name enumbody |
-*      ‘local’ ‘type’ Name ‘=’ newtype |
-*      ‘global’ attnamelist ‘:’ typelist [‘=’ explist] |
-*      ‘global’ attnamelist ‘=’ explist |
-*      ‘global’ ‘function’ Name funcbody |
-*      ‘global’ ‘record’ Name recordbody |
-*      ‘global’ ‘interface’ Name recordbody |
-*      ‘global’ ‘enum’ Name enumbody |
-*      ‘global’ ‘type’ Name [‘=’ newtype]
+       ‘while’ exp@condition ‘do’ block ‘end’ |
+       ‘repeat’ block ‘until’ exp@condition |
+       ‘if’ exp@condition ‘then’ block {‘elseif’ exp@condition ‘then’ block} [‘else’ block] ‘end’ |
+       ‘for’ Name@variable ‘=’ exp@initializer ‘,’ exp@target [‘,’ exp@step] ‘do’ block ‘end’ |
+       ‘for’ namelist@variable ‘in’ explist@iterator ‘do’ block ‘end’ |
+       ‘function’ funcname@name funcbody |
++      ‘local’ attnamelist@declarators [‘:’ typelist@type_annotation] [‘=’ explist@initializers] |
+       ‘local’ ‘function’ Name@name funcbody |
+*      ‘local’ ‘macroexp’ Name@name ‘(’ [parlist@arguments] ‘)’ [‘:’ retlist@return_type] block ‘end’ |
+*      ‘local’ ‘record’ Name@name recordbody@record_body |
+*      ‘local’ ‘interface’ Name@name recordbody@interface_body |
+*      ‘local’ ‘enum’ Name@name enumbody@enum_body |
+*      ‘local’ ‘type’ Name@name [typeargs] ‘=’ newtype@value |
+*      ‘global’ attnamelist@declarators ‘:’ typelist@type_annotation [‘=’ explist@initializers] |
+*      ‘global’ attnamelist@declarators ‘=’ explist@initializers |
+*      ‘global’ ‘function’ Name@name funcbody |
+*      ‘global’ ‘record’ Name@name recordbody@record_body |
+*      ‘global’ ‘interface’ Name@name recordbody@interface_body |
+*      ‘global’ ‘enum’ Name@name enumbody@enum_body |
+*      ‘global’ ‘type’ Name@name [typeargs] [‘=’ newtype@value]
 
-   attnamelist ::=  Name [attrib] {‘,’ Name [attrib]}
+   attnamelist ::=  Name [attrib@attribute] {‘,’ Name [attrib@attribute]}
 
    attrib ::= ‘<’ Name ‘>’
 
@@ -37,29 +38,29 @@
 
    label ::= ‘::’ Name ‘::’
 
-+  funcname ::= Name {‘.’ Name} ‘:’ Name | Name {‘.’ Name} ‘.’ Name
++  funcname ::= Name@base {‘.’ Name} ‘:’ Name@method | Name@base {‘.’ Name} ‘.’ Name@entry
 
    varlist ::= var {‘,’ var}
 
-   var ::=  Name | prefixexp ‘[’ exp ‘]’ | prefixexp ‘.’ Name
+   var ::=  Name | prefixexp@object ‘[’ exp@expr_key ‘]’ | prefixexp@object ‘.’ Name@key
 
    namelist ::= Name {‘,’ Name}
 
    explist ::= exp {‘,’ exp}
 
    exp ::=  ‘nil’ | ‘false’ | ‘true’ | Numeral | LiteralString | ‘...’ | functiondef |
-       prefixexp | tableconstructor | exp binop exp | unop exp |
+       prefixexp | tableconstructor | exp@left binop@op exp@right | unop@op exp@right |
 *      exp ‘as’ type | exp ‘as’ ‘(’ typelist ‘)’ | Name ‘is’ type
 
    prefixexp ::= var | functioncall | ‘(’ exp ‘)’
 
-   functioncall ::=  prefixexp args | prefixexp ‘:’ Name args
+   functioncall ::=  prefixexp@called_object args@arguments | prefixexp@called_object ‘:’ Name@method args@arguments
 
    args ::=  ‘(’ [explist] ‘)’ | tableconstructor | LiteralString
 
    functiondef ::= ‘function’ funcbody
 
-+  funcbody ::= [typeargs] ‘(’ [parlist] ‘)’ [‘:’ retlist] block ‘end’
++  funcbody ::= [typeargs@typeargs] ‘(’ [parlist@arguments] ‘)’ [‘:’ retlist@return_type] block ‘end’
 
 +  parlist ::= parnamelist [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
 
@@ -67,8 +68,8 @@
 
    fieldlist ::= field {fieldsep field} [fieldsep]
 
-   field ::= ‘[’ exp ‘]’ ‘=’ exp |
-+      Name [‘:’ type] ‘=’ exp |
+   field ::= ‘[’ exp@expr_key ‘]’ ‘=’ exp@value |
++      Name@key [‘:’ type@type] ‘=’ exp@value |
        exp
 
    fieldsep ::= ‘,’ | ‘;’
@@ -82,17 +83,19 @@
 
 *  type ::= ‘(’ type ‘)’ | basetype {‘|’ basetype}
 
-*  nominal ::= Name {‘.’ Name } [typeargs]
+*  nominal ::= Name@name {‘.’ Name } [typeargs]
 
-*  basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ |
-*      ‘{’ type {',' type} ‘}’ | ‘{’ type ‘:’ type ‘}’ | functiontype
+*  basetype ::= ‘string’ | ‘boolean’ | ‘nil’ | ‘number’ | ‘integer’ | ‘any’ | ‘thread’ |
+*      ‘{’ type@tuple_type {',' type@tuple_type} ‘}’ | ‘{’ type@key_type ‘:’ type@value_type ‘}’ | functiontype
 *      | nominal
 
 *  typelist ::= type {‘,’ type}
 
 *  retlist ::= ‘(’ [typelist] [‘...’] ‘)’ | typelist [‘...’]
 
-*  typeargs ::= ‘<’ Name {‘,’ Name } ‘>’
+*  typeargs ::= ‘<’ typeparam {‘,’ typeparam } ‘>’
+
+*  typeparam ::= Name@name [‘is’ nominal@constraint] | type
 
 *  newtype ::= ‘record’ recordbody | ‘enum’ enumbody | type
 *      | ‘require’ ‘(’ LiteralString ‘)’ {‘.’ Name }
@@ -100,23 +103,25 @@
 *  interfacelist ::= nominal {‘,’ nominal} |
 *      ‘{’ type ‘}’ {‘,’ nominal}
 
-*  recordbody ::= [typeargs] [‘is’ interfacelist]
-*      [‘where’ exp] {recordentry} ‘end’
+*  recordbody ::= [typeargs] [‘is’ interfacelist@is_types]
+*      [‘where’ exp@where] {recordentry} ‘end’
 
 *  recordentry ::= ‘userdata’ |
-*      ‘type’ Name ‘=’ newtype | [‘metamethod’] recordkey ‘:’ type |
-*      ‘record’ Name recordbody | ‘enum’ Name enumbody
+*      ‘type’ Name@name ‘=’ newtype@value | [‘metamethod’] recordkey@name ‘:’ type@type [‘=’ macroexpbody] |
+*      ‘record’ Name@name recordbody@record_body | ‘enum’ Name@name enumbody@enum_body | 'interface' Name@name recordbody@interface_body
 
 *  recordkey ::= Name | ‘[’ LiteralString ‘]’
 
 *  enumbody ::= {LiteralString} ‘end’
 
-*  functiontype ::= ‘function’ [typeargs] ‘(’ partypelist ‘)’ [‘:’ retlist]
+*  functiontype ::= ‘function’ [typeargs@typeargs] ‘(’ [partypelist@arguments] ‘)’ [‘:’ retlist@return_type]
 
-*  partypelist ::= partype {‘,’ partype}
+*  partypelist ::= partype {‘,’ partype} [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
 
-*  partype ::= Name [‘?’] ‘:’ type | [‘?’] type
+*  partype ::= Name@name [‘?’] ‘:’ type@type | [‘?’] type@type
 
 *  parnamelist ::= parname {‘,’ parname}
 
-*  parname ::= Name [‘?’] [‘:’ type]
+*  parname ::= Name@name [‘?’] [‘:’ type@type]
+
+*  macroexpbody ::= ‘macroexp’ ‘(’ [parlist@arguments] ‘)’ [‘:’ retlist@return_type] block ‘end’
