@@ -844,6 +844,16 @@
     "type": "recordentry",
     "named": true,
     "fields": {
+      "array_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
       "enum_body": {
         "multiple": false,
         "required": false,

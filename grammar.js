@@ -831,6 +831,11 @@ rules: {
   recordentry: $ =>  choice(
     'userdata',
   seq(
+    '{',
+    field('array_type', $.type),
+    '}',
+  ),
+  seq(
     'type',
     field('name', $.identifier),
     '=',
@@ -894,15 +899,19 @@ rules: {
    optional(
       field('typeargs', $.typeargs),
    ),
-   '(',
-   optional(
-      field('arguments', $.partypelist),
-   ),
-   ')',
    optional(
      seq(
-      ':',
-      field('return_type', $.retlist),
+      '(',
+      optional(
+         field('arguments', $.partypelist),
+      ),
+      ')',
+      optional(
+        seq(
+         ':',
+         field('return_type', $.retlist),
+        ),
+      ),
      ),
    ),
   ),
