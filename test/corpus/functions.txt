@@ -1,0 +1,531 @@
+================================================================================
+Local function
+================================================================================
+
+local function f(a: string): number
+   return 1
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype))))
+      (retstat
+        (explist
+          (exp
+            (number)))))))
+
+================================================================================
+Global function
+================================================================================
+
+global function g(a: string): number
+   return 1
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype))))
+      (retstat
+        (explist
+          (exp
+            (number)))))))
+
+================================================================================
+Method definition
+================================================================================
+
+function Point:move(dx: number): Point
+   return self
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (funcname
+      (identifier)
+      (identifier))
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype
+              (nominal
+                (identifier))))))
+      (retstat
+        (explist
+          (exp
+            (prefixexp
+              (var
+                (identifier)))))))))
+
+================================================================================
+Dotted function definition
+================================================================================
+
+function Point.create(x: number): Point
+   return setmetatable({}, Point)
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (funcname
+      (identifier)
+      (identifier))
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype
+              (nominal
+                (identifier))))))
+      (retstat
+        (explist
+          (exp
+            (prefixexp
+              (functioncall
+                (prefixexp
+                  (var
+                    (identifier)))
+                (args
+                  (explist
+                    (exp
+                      (tableconstructor))
+                    (exp
+                      (prefixexp
+                        (var
+                          (identifier))))))))))))))
+
+================================================================================
+Nested dotted function definition
+================================================================================
+
+function mod.sub.fn(a: string): nil
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (funcname
+      (identifier)
+      (identifier)
+      (identifier))
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype)))))))
+
+================================================================================
+Anonymous function
+================================================================================
+
+local f = function(a: string): number
+   return 1
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (functiondef
+          (funcbody
+            (parlist
+              (parnamelist
+                (parname
+                  (identifier)
+                  (type
+                    (basetype)))))
+            (retlist
+              (typelist
+                (type
+                  (basetype))))
+            (retstat
+              (explist
+                (exp
+                  (number))))))))))
+
+================================================================================
+Generic function
+================================================================================
+
+local function map<T, U>(list: {T}, fn: function(T): U): {U}
+   return {}
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (typeargs
+        (typeparam
+          (identifier))
+        (typeparam
+          (identifier)))
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype
+                (type
+                  (basetype
+                    (nominal
+                      (identifier)))))))
+          (parname
+            (identifier)
+            (type
+              (basetype
+                (functiontype
+                  (partypelist
+                    (partype
+                      (type
+                        (basetype
+                          (nominal
+                            (identifier))))))
+                  (retlist
+                    (typelist
+                      (type
+                        (basetype
+                          (nominal
+                            (identifier))))))))))))
+      (retlist
+        (typelist
+          (type
+            (basetype
+              (type
+                (basetype
+                  (nominal
+                    (identifier))))))))
+      (retstat
+        (explist
+          (exp
+            (tableconstructor)))))))
+
+================================================================================
+Function with varargs
+================================================================================
+
+local function f(fmt: string, ...: any): string
+   return fmt
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype))))
+        (type
+          (basetype)))
+      (retlist
+        (typelist
+          (type
+            (basetype))))
+      (retstat
+        (explist
+          (exp
+            (prefixexp
+              (var
+                (identifier)))))))))
+
+================================================================================
+Function with optional parameters
+================================================================================
+
+local function f(a: string, b?: number): nil
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (parlist
+        (parnamelist
+          (parname
+            (identifier)
+            (type
+              (basetype)))
+          (parname
+            (identifier)
+            (type
+              (basetype)))))
+      (retlist
+        (typelist
+          (type
+            (basetype)))))))
+
+================================================================================
+Function with multiple returns
+================================================================================
+
+local function f(): string, number
+   return "a", 1
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (retlist
+        (typelist
+          (type
+            (basetype))
+          (type
+            (basetype))))
+      (retstat
+        (explist
+          (exp
+            (string
+              (string_content)))
+          (exp
+            (number)))))))
+
+================================================================================
+Function with parenthesized return list
+================================================================================
+
+local function f(): (string, number)
+   return "a", 1
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (funcbody
+      (retlist
+        (typelist
+          (type
+            (basetype))
+          (type
+            (basetype))))
+      (retstat
+        (explist
+          (exp
+            (string
+              (string_content)))
+          (exp
+            (number)))))))
+
+================================================================================
+Local macroexp
+================================================================================
+
+local macroexp double(x: number): number
+   return x * 2
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (parlist
+      (parnamelist
+        (parname
+          (identifier)
+          (type
+            (basetype)))))
+    (retlist
+      (typelist
+        (type
+          (basetype))))
+    (retstat
+      (explist
+        (exp
+          (exp
+            (prefixexp
+              (var
+                (identifier))))
+          (binop)
+          (exp
+            (number)))))))
+
+================================================================================
+Statements
+================================================================================
+
+local x <const> = 1
+local y <close> = handle
+x = 2
+if x then y = 1 elseif z then y = 2 else y = 3 end
+while x do break end
+repeat x = 1 until x
+for i = 1, 10, 2 do end
+for k, v in pairs(t) do end
+do end
+goto continue
+::continue::
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier)
+      (attrib
+        (identifier)))
+    (explist
+      (exp
+        (number))))
+  (stat
+    (attnamelist
+      (identifier)
+      (attrib
+        (identifier)))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (identifier))))))
+  (stat
+    (varlist
+      (var
+        (identifier)))
+    (explist
+      (exp
+        (number))))
+  (stat
+    (exp
+      (prefixexp
+        (var
+          (identifier))))
+    (stat
+      (varlist
+        (var
+          (identifier)))
+      (explist
+        (exp
+          (number))))
+    (exp
+      (prefixexp
+        (var
+          (identifier))))
+    (stat
+      (varlist
+        (var
+          (identifier)))
+      (explist
+        (exp
+          (number))))
+    (stat
+      (varlist
+        (var
+          (identifier)))
+      (explist
+        (exp
+          (number)))))
+  (stat
+    (exp
+      (prefixexp
+        (var
+          (identifier))))
+    (stat))
+  (stat
+    (stat
+      (varlist
+        (var
+          (identifier)))
+      (explist
+        (exp
+          (number))))
+    (exp
+      (prefixexp
+        (var
+          (identifier)))))
+  (stat
+    (identifier)
+    (exp
+      (number))
+    (exp
+      (number))
+    (exp
+      (number)))
+  (stat
+    (namelist
+      (identifier)
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (args
+              (explist
+                (exp
+                  (prefixexp
+                    (var
+                      (identifier)))))))))))
+  (stat)
+  (stat
+    (identifier))
+  (stat
+    (label
+      (identifier))))

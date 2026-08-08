@@ -1,0 +1,598 @@
+================================================================================
+Field access
+================================================================================
+
+local x = foo.bar
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (identifier)))))))
+
+================================================================================
+Chained field access
+================================================================================
+
+local x = foo.bar.baz.qux
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (prefixexp
+                      (var
+                        (identifier)))
+                    (identifier)))
+                (identifier)))
+            (identifier)))))))
+
+================================================================================
+Bracket index
+================================================================================
+
+local x = foo["bar"]
+local y = foo[1]
+local z = foo[i + 1]
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (exp
+              (string
+                (string_content))))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (exp
+              (number)))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (exp
+              (exp
+                (prefixexp
+                  (var
+                    (identifier))))
+              (binop)
+              (exp
+                (number)))))))))
+
+================================================================================
+Mixed dot and bracket index
+================================================================================
+
+local x = foo.bar["baz"].qux
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (prefixexp
+                      (var
+                        (identifier)))
+                    (identifier)))
+                (exp
+                  (string
+                    (string_content)))))
+            (identifier)))))))
+
+================================================================================
+Method call
+================================================================================
+
+local x = obj:method()
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (identifier)
+            (args)))))))
+
+================================================================================
+Method call on a chain
+================================================================================
+
+local x = self.foo.bar:baz(1)
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (prefixexp
+                      (var
+                        (identifier)))
+                    (identifier)))
+                (identifier)))
+            (identifier)
+            (args
+              (explist
+                (exp
+                  (number))))))))))
+
+================================================================================
+Field access on a call result
+================================================================================
+
+local x = f().b
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (functioncall
+                (prefixexp
+                  (var
+                    (identifier)))
+                (args)))
+            (identifier)))))))
+
+================================================================================
+Nested call returning a callable
+================================================================================
+
+local x = f()()
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (functioncall
+                (prefixexp
+                  (var
+                    (identifier)))
+                (args)))
+            (args)))))))
+
+================================================================================
+Method call chain
+================================================================================
+
+local x = t:fruit():color():name()
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (functioncall
+                (prefixexp
+                  (functioncall
+                    (prefixexp
+                      (var
+                        (identifier)))
+                    (identifier)
+                    (args)))
+                (identifier)
+                (args)))
+            (identifier)
+            (args)))))))
+
+================================================================================
+Call with string argument
+================================================================================
+
+local x = require "mod"
+local y = f "literal"
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (args
+              (string
+                (string_content))))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (args
+              (string
+                (string_content)))))))))
+
+================================================================================
+Call with table argument
+================================================================================
+
+local x = f { a = 1 }
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (args
+              (tableconstructor
+                (fieldlist
+                  (field
+                    (identifier)
+                    (exp
+                      (number))))))))))))
+
+================================================================================
+Self field access
+================================================================================
+
+local x = self.value
+local y = self.inner.value
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (identifier))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (identifier)))
+                (identifier)))
+            (identifier)))))))
+
+================================================================================
+Parenthesized expression
+================================================================================
+
+local x = (a + b).c
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (exp
+                (exp
+                  (prefixexp
+                    (var
+                      (identifier))))
+                (binop)
+                (exp
+                  (prefixexp
+                    (var
+                      (identifier))))))
+            (identifier)))))))
+
+================================================================================
+Table constructor
+================================================================================
+
+local t = {
+   1,
+   name = "a",
+   ["key"] = 2,
+   [expr] = 3,
+}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (tableconstructor
+          (fieldlist
+            (field
+              (exp
+                (number)))
+            (fieldsep)
+            (field
+              (identifier)
+              (exp
+                (string
+                  (string_content))))
+            (fieldsep)
+            (field
+              (exp
+                (string
+                  (string_content)))
+              (exp
+                (number)))
+            (fieldsep)
+            (field
+              (exp
+                (prefixexp
+                  (var
+                    (identifier))))
+              (exp
+                (number)))
+            (fieldsep)))))))
+
+================================================================================
+Binary and unary operators
+================================================================================
+
+local a = 1 + 2 * 3
+local b = not x
+local c = -y
+local d = #t
+local e = a .. b
+local f = a and b or c
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (exp
+          (exp
+            (number))
+          (binop)
+          (exp
+            (number)))
+        (binop)
+        (exp
+          (number)))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (unop)
+        (exp
+          (prefixexp
+            (var
+              (identifier)))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (unop)
+        (exp
+          (prefixexp
+            (var
+              (identifier)))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (unop)
+        (exp
+          (prefixexp
+            (var
+              (identifier)))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (exp
+          (prefixexp
+            (var
+              (identifier))))
+        (binop)
+        (exp
+          (prefixexp
+            (var
+              (identifier)))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (exp
+          (exp
+            (prefixexp
+              (var
+                (identifier))))
+          (binop)
+          (exp
+            (prefixexp
+              (var
+                (identifier)))))
+        (binop)
+        (exp
+          (prefixexp
+            (var
+              (identifier))))))))
+
+================================================================================
+Type cast with as
+================================================================================
+
+local x = value as string
+local y = value as {string: number}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (exp
+          (prefixexp
+            (var
+              (identifier))))
+        (type
+          (basetype)))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (exp
+          (prefixexp
+            (var
+              (identifier))))
+        (type
+          (basetype
+            (type
+              (basetype))
+            (type
+              (basetype))))))))
+
+================================================================================
+Is operator
+================================================================================
+
+if shape is Circle then
+   local r = shape.radius
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (exp
+      (identifier)
+      (type
+        (basetype
+          (nominal
+            (identifier)))))
+    (stat
+      (attnamelist
+        (identifier))
+      (explist
+        (exp
+          (prefixexp
+            (var
+              (prefixexp
+                (var
+                  (identifier)))
+              (identifier))))))))

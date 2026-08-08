@@ -24,6 +24,7 @@ teal:parser():parse_string("local x = 1")
 - The codebase is messy, but _should_ be able to handle simple changes/additions to Teal's grammar.
 - It is mostly a direct translation (with annotations), but there are a couple of hard-coded instances worth keeping track of:
     - `chunk` had to be rewritten as the entrypoint, and `block` was inlined. Both were because tree-sitter doesn't allow rules to match the empty string.
+        - An empty or comment-only file parses to a bare `(ERROR)` root rather than an empty `chunk`...
     - Precedence has been added to `binop`, `unop`
     - `recordkey` has been modified to support Teal keywords (so `type` can be a key in a record)
 
@@ -43,6 +44,7 @@ teal:parser():parse_string("local x = 1")
 5. If they make sense, overwrite `grammar2.js` with `grammar.js`
 6. Run `tree-sitter generate`
     - Optionally after: run `tree-sitter build --wasm` and `tree-sitter playground` and ensure Teal files are working correctly
+7. If a `tree-sitter test` changes, ensure it's new behaviour is actually correct before updating it with `tree-sitter test --update`
 7. Release a new version
 
 ## Licenses
