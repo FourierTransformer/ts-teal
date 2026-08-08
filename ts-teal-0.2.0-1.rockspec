@@ -1,7 +1,7 @@
 rockspec_format = "3.0"
 
 package = "ts-teal"
-version = "0.2.0"
+version = "0.2.0-1"
 
 source = {
    url = "git+https://github.com/FourierTransformer/ts-teal",
