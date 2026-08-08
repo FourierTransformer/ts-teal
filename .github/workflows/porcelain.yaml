@@ -38,7 +38,12 @@ jobs:
 
     - name: Make sure git is happy with the generation
       run: |
-        git status --porcelain
+        git diff --exit-code --quiet && git diff --cached --exit-code --quiet
+
+    - name: Ensure the annotated teal-grammar.ebnf aligns with original-teal.ebnf
+      run: |
+        tl run generate-grammar.tl -- --check-spec | diff original-teal.ebnf -
 
     - name: Run tree-sitter tests
-      run: tree-sitter test
+      run: |
+        tree-sitter test

@@ -49,5 +49,5 @@ zig-out/
 *.tgz
 *.zip
 
-lua/
+lua_install/
 .DS_Store
