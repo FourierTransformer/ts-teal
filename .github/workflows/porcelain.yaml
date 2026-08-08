@@ -1,0 +1,44 @@
+name: git porcelain + tree-sitter test
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Install libreadline
+      run: sudo apt-get install -y libreadline-dev
+
+    - name: Cache Restore
+      uses: actions/cache/restore@v5
+      with:
+        path: |
+          lua_install
+        key: lua_install
+
+    - name: Install Lua (5.4)
+      run: |
+        pip install git+https://github.com/luarocks/hererocks
+        hererocks -r^ --lua=5.4 lua_install
+        echo lua_install/bin >> $GITHUB_PATH
+
+    - name: Install depedencies
+      run: |
+        luarocks install tl
+        luarocks install tree-sitter-cli
+
+    - name: Re-generate grammar.js
+      run: |
+        tl run generate-grammar.tl > grammar.js
+        tree-sitter generate
+
+    - name: Make sure git is happy with the generation
+      run: |
+        git status --porcelain
+
+    - name: Run tree-sitter tests
+      run: tree-sitter test
