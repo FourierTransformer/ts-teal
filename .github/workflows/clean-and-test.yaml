@@ -47,3 +47,7 @@ jobs:
     - name: Run tree-sitter tests
       run: |
         tree-sitter test
+
+    - name: Run tree-sitter parse on tl.tl
+      run: |
+        tree-sitter parse $(luarocks show --porcelain tl | grep tl.tl | awk '{ print $NF }')
