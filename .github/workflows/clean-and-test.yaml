@@ -1,4 +1,4 @@
-name: git porcelain + tree-sitter test
+name: ensure everything is built + tree-sitter test
 on:
   pull_request:
     branches: [ main ]
@@ -28,8 +28,8 @@ jobs:
 
     - name: Install depedencies
       run: |
-        luarocks install tl
-        luarocks install tree-sitter-cli
+        luarocks install tl 0.24.8
+        luarocks install tree-sitter-cli 0.26.8
 
     - name: Re-generate grammar.js
       run: |
