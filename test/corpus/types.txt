@@ -1,0 +1,444 @@
+================================================================================
+Builtin types
+================================================================================
+
+local a: string
+local b: number
+local c: boolean
+local d: integer
+local e: any
+local f: thread
+local g: nil
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype)))))
+
+================================================================================
+Bare function type
+================================================================================
+
+local f: function
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype))))))
+
+================================================================================
+Bare function type in a map value
+================================================================================
+
+local t: {string: function}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (type
+            (basetype))
+          (type
+            (basetype
+              (functiontype))))))))
+
+================================================================================
+Bare function type in a union
+================================================================================
+
+local convert: function | {function}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype))
+        (basetype
+          (type
+            (basetype
+              (functiontype))))))))
+
+================================================================================
+Cast to a bare function type
+================================================================================
+
+local ok = xpcall(f, debug.traceback as function)
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (args
+              (explist
+                (exp
+                  (prefixexp
+                    (var
+                      (identifier))))
+                (exp
+                  (exp
+                    (prefixexp
+                      (var
+                        (prefixexp
+                          (var
+                            (identifier)))
+                        (identifier))))
+                  (type
+                    (basetype
+                      (functiontype))))))))))))
+
+================================================================================
+Function type with arguments and return
+================================================================================
+
+local f: function(a: string, b: number): boolean
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype
+            (partypelist
+              (partype
+                (identifier)
+                (type
+                  (basetype)))
+              (partype
+                (identifier)
+                (type
+                  (basetype))))
+            (retlist
+              (typelist
+                (type
+                  (basetype))))))))))
+
+================================================================================
+Function type with optional arguments
+================================================================================
+
+local f: function(a?: string, b?: number)
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype
+            (partypelist
+              (partype
+                (identifier)
+                (type
+                  (basetype)))
+              (partype
+                (identifier)
+                (type
+                  (basetype))))))))))
+
+================================================================================
+Function type with varargs
+================================================================================
+
+local f: function(string, ...: number): string
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype
+            (partypelist
+              (partype
+                (type
+                  (basetype)))
+              (type
+                (basetype)))
+            (retlist
+              (typelist
+                (type
+                  (basetype))))))))))
+
+================================================================================
+Generic function type
+================================================================================
+
+local f: function<T>(a: T): T
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (functiontype
+            (typeargs
+              (typeparam
+                (identifier)))
+            (partypelist
+              (partype
+                (identifier)
+                (type
+                  (basetype
+                    (nominal
+                      (identifier))))))
+            (retlist
+              (typelist
+                (type
+                  (basetype
+                    (nominal
+                      (identifier))))))))))))
+
+================================================================================
+Array and map types
+================================================================================
+
+local a: {string}
+local m: {string: number}
+local nested: {string: {number}}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (type
+            (basetype))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (type
+            (basetype))
+          (type
+            (basetype))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (type
+            (basetype))
+          (type
+            (basetype
+              (type
+                (basetype)))))))))
+
+================================================================================
+Tuple type
+================================================================================
+
+local t: {string, number, boolean}
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (type
+            (basetype))
+          (type
+            (basetype))
+          (type
+            (basetype)))))))
+
+================================================================================
+Union types
+================================================================================
+
+local u: string | number
+local v: integer | string
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype)
+        (basetype))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype)
+        (basetype)))))
+
+================================================================================
+Nominal and qualified nominal types
+================================================================================
+
+local p: Point
+local q: mod.Point
+local r: mod.sub.Point
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier)
+            (identifier))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier)
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+Generic nominal type
+================================================================================
+
+local m: Map<string, number>
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier)
+            (typeargs
+              (typeparam
+                (type
+                  (basetype)))
+              (typeparam
+                (type
+                  (basetype))))))))))
+
+================================================================================
+Type alias from require
+================================================================================
+
+local type A = require("mod")
+local type B = require("mod").Sub
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (newtype
+      (string
+        (string_content))))
+  (stat
+    (identifier)
+    (newtype
+      (string
+        (string_content))
+      (identifier))))

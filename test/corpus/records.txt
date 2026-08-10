@@ -1,0 +1,550 @@
+================================================================================
+Simple record
+================================================================================
+
+local record Point
+   x: number
+   y: number
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype))))))
+
+================================================================================
+Record array type
+================================================================================
+
+local record R
+   {string}
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (type
+          (basetype))))))
+
+================================================================================
+Record array type alongside fields
+================================================================================
+
+local record Chunk
+   {Node}
+   name: string
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (type
+          (basetype
+            (nominal
+              (identifier)))))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype))))))
+
+================================================================================
+Record with methods
+================================================================================
+
+local record Point
+   x: number
+   move: function(self: Point, dx: number): Point
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (identifier)
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier)))))
+                (partype
+                  (identifier)
+                  (type
+                    (basetype))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier)))))))))))))
+
+================================================================================
+Record with macroexp entry
+================================================================================
+
+local record StringBuilder
+   build: function(self): string = macroexp(self: StringBuilder): string
+      return table.concat(self)
+   end
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype)))))))
+        (macroexpbody
+          (parlist
+            (parnamelist
+              (parname
+                (identifier)
+                (type
+                  (basetype
+                    (nominal
+                      (identifier)))))))
+          (retlist
+            (typelist
+              (type
+                (basetype))))
+          (retstat
+            (explist
+              (exp
+                (prefixexp
+                  (functioncall
+                    (prefixexp
+                      (var
+                        (prefixexp
+                          (var
+                            (identifier)))
+                        (identifier)))
+                    (args
+                      (explist
+                        (exp
+                          (prefixexp
+                            (var
+                              (identifier))))))))))))))))
+
+================================================================================
+Record with nested record, enum and interface
+================================================================================
+
+local record Outer
+   record Inner
+      a: number
+   end
+   enum Color
+      "red"
+      "blue"
+   end
+   interface Shape
+      area: function(self): number
+   end
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (identifier)
+        (recordbody
+          (recordentry
+            (recordkey
+              (identifier))
+            (type
+              (basetype)))))
+      (recordentry
+        (identifier)
+        (enumbody
+          (string
+            (string_content))
+          (string
+            (string_content))))
+      (recordentry
+        (identifier)
+        (recordbody
+          (recordentry
+            (recordkey
+              (identifier))
+            (type
+              (basetype
+                (functiontype
+                  (partypelist
+                    (partype
+                      (type
+                        (basetype
+                          (nominal
+                            (identifier))))))
+                  (retlist
+                    (typelist
+                      (type
+                        (basetype)))))))))))))
+
+================================================================================
+Record with nested type alias
+================================================================================
+
+local record M
+   type Handler = function(string): nil
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (identifier)
+        (newtype
+          (type
+            (basetype
+              (functiontype
+                (partypelist
+                  (partype
+                    (type
+                      (basetype))))
+                (retlist
+                  (typelist
+                    (type
+                      (basetype))))))))))))
+
+================================================================================
+Record with metamethod
+================================================================================
+
+local record Vec
+   metamethod __add: function(Vec, Vec): Vec
+   metamethod __tostring: function(Vec): string
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier)))))
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))))))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype)))))))))))
+
+================================================================================
+Record with userdata
+================================================================================
+
+local record Handle
+   userdata
+   close: function(self): nil
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry)
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype)))))))))))
+
+================================================================================
+Generic record
+================================================================================
+
+local record Map<K, V>
+   get: function(self, key: K): V
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (typeargs
+        (typeparam
+          (identifier))
+        (typeparam
+          (identifier)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype
+            (functiontype
+              (partypelist
+                (partype
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier)))))
+                (partype
+                  (identifier)
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier))))))
+              (retlist
+                (typelist
+                  (type
+                    (basetype
+                      (nominal
+                        (identifier)))))))))))))
+
+================================================================================
+Record with is and where
+================================================================================
+
+local interface Shape
+   kind: string
+end
+
+local record Circle is Shape where self.kind == "circle"
+   radius: number
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))))
+  (stat
+    (identifier)
+    (recordbody
+      (interfacelist
+        (nominal
+          (identifier)))
+      (exp
+        (exp
+          (prefixexp
+            (var
+              (prefixexp
+                (var
+                  (identifier)))
+              (identifier))))
+        (binop)
+        (exp
+          (string
+            (string_content))))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype))))))
+
+================================================================================
+Record with keyword-named keys
+================================================================================
+
+local record Keys
+   type: string
+   record: number
+   enum: boolean
+   where: string
+   as: number
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype))))))
+
+================================================================================
+Record with string-literal keys
+================================================================================
+
+local record Weird
+   ["with spaces"]: string
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (string
+            (string_content)))
+        (type
+          (basetype))))))
+
+================================================================================
+Global record declaration
+================================================================================
+
+global record G
+   a: number
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype))))))
+
+================================================================================
+Enum declaration
+================================================================================
+
+local enum Color
+   "red"
+   "green"
+   "blue"
+end
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (enumbody
+      (string
+        (string_content))
+      (string
+        (string_content))
+      (string
+        (string_content)))))

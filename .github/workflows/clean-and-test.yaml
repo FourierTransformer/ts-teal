@@ -1,0 +1,53 @@
+name: ensure everything is built + tree-sitter test
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Install libreadline
+      run: sudo apt-get install -y libreadline-dev
+
+    - name: Cache Restore
+      uses: actions/cache/restore@v5
+      with:
+        path: |
+          lua_install
+        key: lua_install
+
+    - name: Install Lua (5.4)
+      run: |
+        pip install git+https://github.com/luarocks/hererocks
+        hererocks -r^ --lua=5.4 lua_install
+        echo lua_install/bin >> $GITHUB_PATH
+
+    - name: Install depedencies
+      run: |
+        luarocks install tl 0.24.8
+        luarocks install tree-sitter-cli 0.26.8
+
+    - name: Re-generate grammar.js + run tree-sitter generate
+      run: |
+        tl run generate-grammar.tl > grammar.js
+        tree-sitter generate
+
+    - name: Make sure git is happy with the generation
+      run: |
+        git diff --exit-code --quiet && git diff --cached --exit-code --quiet
+
+    - name: Ensure the annotated teal-grammar.ebnf aligns with original-teal.ebnf
+      run: |
+        tl run generate-grammar.tl -- --check-spec | diff original-teal.ebnf -
+
+    - name: Run tree-sitter tests
+      run: |
+        tree-sitter test
+
+    - name: Run tree-sitter parse on tl.tl
+      run: |
+        tree-sitter parse $(luarocks show --porcelain tl | grep tl.tl | awk '{ print $NF }')

@@ -106,7 +106,7 @@
 *  recordbody ::= [typeargs] [‘is’ interfacelist@is_types]
 *      [‘where’ exp@where] {recordentry} ‘end’
 
-*  recordentry ::= ‘userdata’ |
+*  recordentry ::= ‘userdata’ | ‘{’ type@array_type ‘}’ |
 *      ‘type’ Name@name ‘=’ newtype@value | [‘metamethod’] recordkey@name ‘:’ type@type [‘=’ macroexpbody] |
 *      ‘record’ Name@name recordbody@record_body | ‘enum’ Name@name enumbody@enum_body | 'interface' Name@name recordbody@interface_body
 
@@ -114,7 +114,7 @@
 
 *  enumbody ::= {LiteralString} ‘end’
 
-*  functiontype ::= ‘function’ [typeargs@typeargs] ‘(’ [partypelist@arguments] ‘)’ [‘:’ retlist@return_type]
+*  functiontype ::= ‘function’ [typeargs@typeargs] [‘(’ [partypelist@arguments] ‘)’ [‘:’ retlist@return_type]]
 
 *  partypelist ::= partype {‘,’ partype} [‘,’ ‘...’ [‘:’ type]] | ‘...’ [‘:’ type]
 

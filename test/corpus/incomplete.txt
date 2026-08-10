@@ -1,0 +1,297 @@
+This file pins the shape of the parse tree for INCOMPLETE documents -- the state
+a source file is in while someone is typing. teal-language-server drives
+completion, hover and signature help off exactly these trees, so the recovery
+shape here is load-bearing behaviour, not an implementation detail.
+
+Two things to know before blessing a change in this file:
+
+  * These trees are written by hand. `tree-sitter test --update` refuses to
+    touch tests containing ERROR or MISSING nodes, which is all of them.
+  * A change here can silently break completion in teal-language-server without
+    breaking any test in this repo. Check `Document:_tree_sitter_token` there.
+
+Note the two recovery shapes the language server has to tell apart:
+
+  * `foo.` and `foo.bar.` recover *inside* a `var` node, with a MISSING
+    identifier for the key -- no ERROR node at all.
+  * `foo:` and a bare `math.` at statement level produce an ERROR node instead,
+    because a trailing `:` cannot be completed into a valid `var`.
+
+One case cannot be expressed in this file: an empty (or comment-only) document
+parses to a bare `(ERROR)` root rather than an empty `chunk`, because `chunk`
+is required to match at least one statement -- tree-sitter does not allow a
+rule to match the empty string, which is why `chunk` was rewritten in the first
+place (see README). tree-sitter's corpus format has no way to write a test with
+empty source, so it is noted here instead. tree-sitter-teal returned an empty
+`program` node for this case, so anything downstream that keys off the root
+node type needs to handle `ERROR`.
+
+================================================================================
+Trailing dot on a local
+================================================================================
+
+local x = foo.
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (MISSING identifier)))))))
+
+================================================================================
+Trailing dot on a chain
+================================================================================
+
+local x = foo.bar.
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (identifier)))
+                (identifier)))
+            (MISSING identifier)))))))
+
+================================================================================
+Trailing dot on a call result
+================================================================================
+
+local x = f().
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (functioncall
+                (prefixexp
+                  (var
+                    (identifier)))
+                (args)))
+            (MISSING identifier)))))))
+
+================================================================================
+Trailing colon on a local
+================================================================================
+
+local y = obj:
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (identifier))))))
+  (ERROR))
+
+================================================================================
+Trailing colon on a call result
+================================================================================
+
+local y = t:fruit():
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (functioncall
+            (prefixexp
+              (var
+                (identifier)))
+            (identifier)
+            (args))))))
+  (ERROR))
+
+================================================================================
+Trailing dot on a global
+================================================================================
+
+math.
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (prefixexp
+    (var
+      (identifier))))
+
+================================================================================
+Unclosed call
+================================================================================
+
+print(foo.bar
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (functioncall
+      (prefixexp
+        (var
+          (identifier)))
+      (args
+        (explist
+          (exp
+            (prefixexp
+              (var
+                (prefixexp
+                  (var
+                    (identifier)))
+                (identifier)))))
+        (MISSING ")")))))
+
+================================================================================
+Unclosed call with dotted callee
+================================================================================
+
+tracing.warning(
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (prefixexp
+    (var
+      (prefixexp
+        (var
+          (identifier)))
+      (identifier))))
+
+================================================================================
+Unclosed method call
+================================================================================
+
+obj:method(
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (prefixexp
+    (var
+      (identifier)))
+  (identifier))
+
+================================================================================
+Trailing dot inside a method body
+================================================================================
+
+function Point:move(dx: number): Point
+   local a = self.
+end
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (funcname
+    (identifier)
+    (identifier))
+  (parlist
+    (parnamelist
+      (parname
+        (identifier)
+        (type
+          (basetype)))))
+  (retlist
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier))))))
+  (stat
+    (attnamelist
+      (identifier))
+    (explist
+      (exp
+        (prefixexp
+          (var
+            (prefixexp
+              (var
+                (identifier)))
+            (identifier)))))))
+
+================================================================================
+Trailing colon inside a method body
+================================================================================
+
+function Point:move(dx: number): Point
+   local a = self:
+end
+
+--------------------------------------------------------------------------------
+
+(ERROR
+  (funcname
+    (identifier)
+    (identifier))
+  (parlist
+    (parnamelist
+      (parname
+        (identifier)
+        (type
+          (basetype)))))
+  (retlist
+    (typelist
+      (type
+        (basetype
+          (nominal
+            (identifier))))))
+  (attnamelist
+    (identifier))
+  (prefixexp
+    (var
+      (identifier)))
+  (identifier))
+
+================================================================================
+Incomplete record body
+================================================================================
+
+local record R
+   x: number
+
+--------------------------------------------------------------------------------
+
+(chunk
+  (stat
+    (identifier)
+    (recordbody
+      (recordentry
+        (recordkey
+          (identifier))
+        (type
+          (basetype)))
+      (MISSING "end"))))

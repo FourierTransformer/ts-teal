@@ -1,10 +1,11 @@
 rockspec_format = "3.0"
 
 package = "ts-teal"
-version = "scm-1"
+version = "0.2.0-1"
 
 source = {
-   url = "git+https://github.com/FourierTransformer/ts-teal"
+   url = "git+https://github.com/FourierTransformer/ts-teal",
+   tag = "0.2.0"
 }
 
 description = {
