@@ -31,7 +31,7 @@ jobs:
         luarocks install tl 0.24.8
         luarocks install tree-sitter-cli 0.26.8
 
-    - name: Re-generate grammar.js
+    - name: Re-generate grammar.js + run tree-sitter generate
       run: |
         tl run generate-grammar.tl > grammar.js
         tree-sitter generate
